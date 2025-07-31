@@ -1,0 +1,26 @@
+# === TERRAFORM ===
+.terraform/
+*.tfstate
+*.tfstate.backup
+crash.log
+
+# === PYTHON ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# === IGNORE FUNCTION PACKAGING ARTIFACTS ===
+*.zip
+
+# === MISC / OS ===
+.DS_Store
+Thumbs.db
+
+# === ENV/SECRETS (uncomment if you create them) ===
+.env
+.env.*
+
+# === VSCODE/FOLDER SETTINGS (optional) ===
+.vscode/
+.idea/
