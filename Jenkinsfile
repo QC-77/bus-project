@@ -1,11 +1,18 @@
 pipeline {
     agent any
     environment {
-        AWS_DEFAULT_REGION = 'us-east-1' // or your AWS region
+        AWS_DEFAULT_REGION = 'us-east-1'
     }
     stages {
-        // ... previous stages (checkout, lint, etc.)
-        stage('Terraform Apply') {
+        // ... (previous stages like Checkout, Install Dependencies, etc.)
+        stage('Check Branch') {
+            steps {
+                bat 'echo Current branch: %GIT_BRANCH%'
+                bat 'git branch'
+                bat 'git rev-parse --abbrev-ref HEAD'
+            }
+        }
+        stage('Terraform Apply -auto-approve') {
             when {
                 branch 'main'
             }
