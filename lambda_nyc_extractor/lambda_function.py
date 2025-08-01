@@ -36,6 +36,7 @@ PRIORITY_MAP = {
     "Problem Run": "low",
 }
 
+
 # === UTILITY: Parse time delay field into integer minutes ===
 def parse_delay(delay_str):
     """
@@ -54,6 +55,7 @@ def parse_delay(delay_str):
         return int((int(mins[0]) + int(mins[1])) / 2)
     # Handle plain minutes like '30 Min'
     return int(mins[0]) if mins else None
+
 
 # === MAIN HANDLER ===
 def lambda_handler(event, context):
@@ -119,11 +121,7 @@ def lambda_handler(event, context):
         cloudwatch.put_metric_data(
             Namespace="Custom",
             MetricData=[
-                {
-                    "MetricName": "HighPriorityAlerts",
-                    "Value": 1,
-                    "Unit": "Count"
-                }
+                {"MetricName": "HighPriorityAlerts", "Value": 1, "Unit": "Count"}
             ],
         )
     # Return HTTP success for API Gateway
