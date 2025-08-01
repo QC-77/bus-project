@@ -2,11 +2,11 @@ import requests
 import boto3
 
 # ==== USER CONFIGURATION ====
-COGNITO_POOL_ID   = "us-east-1_k0QDhJblk"              # <-- Terraform output: COGNITO USER POOL ID
-COGNITO_CLIENT_ID = "34psd5e15te7fakcetdr92dimv"           # <-- AWS Console > Cognito > User Pools > App clients settings
+COGNITO_POOL_ID   = "us-east-1_o0M8I5dAY"              # <-- Terraform output: COGNITO USER POOL ID
+COGNITO_CLIENT_ID = "5nfcvl0lm2mj010j9lafe5qpuo"           # <-- AWS Console > Cognito > User Pools > App clients settings
 USERNAME          = "testuser"
 PASSWORD          = "StrongP@ss1!"
-API_URL           = "https://68aci8kd28.execute-api.us-east-1.amazonaws.com/dev/bus" # <-- Terraform output
+API_URL           = "https://e9886f4jy9.execute-api.us-east-1.amazonaws.com/dev/bus" # <-- Terraform output
 
 def get_jwt_token():
     client = boto3.client('cognito-idp', region_name='us-east-1')
