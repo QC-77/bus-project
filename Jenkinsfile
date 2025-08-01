@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
     environment {
@@ -18,8 +17,14 @@ pipeline {
         }
         stage('Build Lambda Package') {
             steps {
+                // Clean package folder (if it exists)
+                bat 'if exist lambda_package rmdir /s /q lambda_package'
                 bat 'mkdir lambda_package'
-                bat 'powershell Compress-Archive -Path lambda_nyc_extractor\\lambda_function.py -DestinationPath lambda_package\\lambda_nyc_extractor_package.zip -Force'
+                // Zip ALL content of lambda_nyc_extractor for Lambda deployment
+                bat '''
+                    powershell -Command "Compress-Archive -Path lambda_nyc_extractor\\* `
+                        -DestinationPath lambda_package\\lambda_nyc_extractor_package.zip -Force"
+                '''
             }
         }
         stage('Lint Python') {
@@ -32,6 +37,11 @@ pipeline {
             steps {
                 bat 'terraform fmt -check'
                 bat 'terraform validate'
+            }
+        }
+        stage('Terraform Plan') {
+            steps {
+                bat 'cd terraform && terraform plan'
             }
         }
         stage('Terraform Apply -auto-approve') {
@@ -47,4 +57,10 @@ pipeline {
             }
         }
     }
+    post {
+        failure {
+            echo 'Build failed! Check the logs above for details.'
+        }
+    }
 }
+
