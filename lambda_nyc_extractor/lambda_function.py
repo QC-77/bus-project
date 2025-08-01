@@ -10,8 +10,7 @@ import re
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)  # Ensures all INFO+ messages go to CloudWatch
 
-# Initialize AWS SDK clients for S3 (raw payloads), DynamoDB (enriched
-# data), and CloudWatch (metrics)
+# Initialize AWS SDK clients for S3 (raw payloads), DynamoDB (enriched data), and CloudWatch (metrics)
 s3 = boto3.client("s3")
 dynamodb = boto3.resource("dynamodb")
 cloudwatch = boto3.client("cloudwatch")
@@ -20,13 +19,11 @@ cloudwatch = boto3.client("cloudwatch")
 S3_BUCKET = os.environ.get("S3_BUCKET")
 DYNAMODB_TABLE = os.environ.get("DYNAMODB_TABLE")
 
-# List of fields that must be present in the incoming event (for reliable
-# data processing)
+# List of fields that must be present in the incoming event (for reliable data processing)
 REQUIRED_FIELDS = ["Busbreakdown_ID", "Route_Number", "Reason"]
 
 # === ALERT PRIORITY MAPPING ===
-# Business logic: Map Reason to alert_priority (used for downstream
-# alerting and metric emission)
+# Business logic: Map Reason to alert_priority (used for downstream alerting and metric emission)
 PRIORITY_MAP = {
     "Mechanical Problem": "high",
     "Flat Tire": "high",
@@ -38,7 +35,6 @@ PRIORITY_MAP = {
     "Other": "low",
     "Problem Run": "low",
 }
-
 
 # === UTILITY: Parse time delay field into integer minutes ===
 def parse_delay(delay_str):
@@ -59,7 +55,6 @@ def parse_delay(delay_str):
     # Handle plain minutes like '30 Min'
     return int(mins[0]) if mins else None
 
-
 # === MAIN HANDLER ===
 def lambda_handler(event, context):
     """
@@ -75,8 +70,7 @@ def lambda_handler(event, context):
     if "body" in event:
         try:
             body = json.loads(event["body"])
-        except Exception as e:
-            print(e)
+        except Exception:
             # Return API error promptly if request body is malformatted
             return {
                 "statusCode": 400,
@@ -94,14 +88,11 @@ def lambda_handler(event, context):
     # === ENRICHMENT ===
     # Add 'alert_priority' and 'average_delay_minutes' fields
     reason = body["Reason"]
-    body["alert_priority"] = PRIORITY_MAP.get(
-        reason, "low"
-    )  # Default 'low' if not matched
+    body["alert_priority"] = PRIORITY_MAP.get(reason, "low")
     body["average_delay_minutes"] = parse_delay(body.get("How_Long_Delayed"))
 
     # === OBSERVABILITY: Structured Logging ===
-    # Create a log entry keyed by Busbreakdown_ID and Route_Number for fast
-    # trace/search
+    # Create a log entry keyed by Busbreakdown_ID and Route_Number for fast trace/search
     log_data = {
         "Busbreakdown_ID": body.get("Busbreakdown_ID"),
         "Route_Number": body.get("Route_Number"),
@@ -128,7 +119,11 @@ def lambda_handler(event, context):
         cloudwatch.put_metric_data(
             Namespace="Custom",
             MetricData=[
-                {"MetricName": "HighPriorityAlerts", "Value": 1, "Unit": "Count"}
+                {
+                    "MetricName": "HighPriorityAlerts",
+                    "Value": 1,
+                    "Unit": "Count"
+                }
             ],
         )
     # Return HTTP success for API Gateway
