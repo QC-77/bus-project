@@ -88,9 +88,7 @@ def lambda_handler(event, context):
     if missing:
         return {
             "statusCode": 400,
-            "body": json.dumps({
-                "error": f"Missing fields: {', '.join(missing)}"
-            }),
+            "body": json.dumps({"error": f"Missing fields: {', '.join(missing)}"}),
         }
 
     # === ENRICHMENT ===
@@ -128,11 +126,7 @@ def lambda_handler(event, context):
         cloudwatch.put_metric_data(
             Namespace="Custom",
             MetricData=[
-                {
-                    "MetricName": "HighPriorityAlerts",
-                    "Value": 1,
-                    "Unit": "Count"
-                }
+                {"MetricName": "HighPriorityAlerts", "Value": 1, "Unit": "Count"}
             ],
         )
     # Return HTTP success for API Gateway
