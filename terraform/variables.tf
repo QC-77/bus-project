@@ -39,7 +39,8 @@ variable "lambda_runtime" {
 
 variable "lambda_package_path" {
   description = "Zip path for Lambda code"
-  type = string
+  type        = string
+  default     = "../lambda_package/lambda_nyc_extractor_package.zip"
 }
 
 variable "sns_topic_name" {
