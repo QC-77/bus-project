@@ -21,11 +21,9 @@ pipeline {
                 bat 'if exist lambda_package rmdir /s /q lambda_package'
                 bat 'mkdir lambda_package'
                 // Zip ALL content of lambda_nyc_extractor for Lambda deployment
-                bat '''
-                    powershell -Command "Compress-Archive -Path lambda_nyc_extractor\\* `
-                        -DestinationPath lambda_package\\lambda_nyc_extractor_package.zip -Force"
-                '''
-            }
+                bat 'powershell -Command "Compress-Archive -Path lambda_nyc_extractor\\* -DestinationPath lambda_package\\lambda_nyc_extractor_package.zip -Force"'
+
+                }
         }
         stage('Lint Python') {
             steps {
