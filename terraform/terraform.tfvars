@@ -1,5 +1,5 @@
 environment          = "dev"
 s3_bucket_name       = "busdelayalert"
 dynamodb_table_name  = "bus_delay_data_dev"
-lambda_package_path  = "./lambda_package/lambda_nyc_extractor_package.zip"
+lambda_package_path  = "../lambda_package/lambda_nyc_extractor_package.zip"
 lambda_function_name = "nyc-extractor-lambda-dev"
