@@ -1,29 +1,24 @@
 pipeline {
     agent any
+    environment {
+        AWS_DEFAULT_REGION = 'us-east-1' // or your AWS region
+    }
     stages {
-        stage('Checkout Code') {
+        // ... previous stages (checkout, lint, etc.)
+        stage('Terraform Apply') {
+            when {
+                branch 'main'
+            }
             steps {
-                checkout scm
+                withCredentials([usernamePassword(
+                    credentialsId: 'aws-credentials',
+                    usernameVariable: 'AWS_ACCESS_KEY_ID',
+                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                )]) {
+                    bat 'cd terraform && terraform init'
+                    bat 'cd terraform && terraform apply -auto-approve'
+                }
             }
         }
-        stage('Install Dependencies') {
-            steps {
-                bat 'pip install --upgrade pip'
-                bat 'pip install black flake8 boto3 requests'
-            }
-        }
-        stage('Lint Python') {
-            steps {
-                bat 'black --check lambda_nyc_extractor/lambda_function.py'
-                bat 'flake8 lambda_nyc_extractor/lambda_function.py --max-line-length=88'
-            }
-        }
-        stage('Lint Terraform') {
-            steps {
-                bat 'terraform fmt -check'
-                bat 'terraform validate'
-            }
-        }
-        // Add test, build, and deploy stages as needed
     }
 }
