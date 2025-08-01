@@ -4,7 +4,7 @@ pipeline {
         AWS_DEFAULT_REGION = 'us-east-1'
     }
     stages {
-        // ... (previous stages like Checkout, Install Dependencies, etc.)
+        // ... (other stages here, like Checkout, Install Dependencies, etc.)
         stage('Check Branch') {
             steps {
                 bat 'echo Current branch: %GIT_BRANCH%'
@@ -13,9 +13,6 @@ pipeline {
             }
         }
         stage('Terraform Apply -auto-approve') {
-            when {
-                branch 'main'
-            }
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'aws-credentials',
